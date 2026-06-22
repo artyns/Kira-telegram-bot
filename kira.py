@@ -14,7 +14,7 @@ client = OpenAI(
 )
 
 def MakeAnswer(Message):
-    msg = bot.reply_to(Message, "thinking...")
+    
     try :
         user_name = Message.from_user.first_name
 
@@ -56,7 +56,7 @@ def MakeAnswer(Message):
 
         
         return(response.choices[0].message.content)
-        bot.delete_message(Message.chat.id, Message.message_id)
+        
     
 
 

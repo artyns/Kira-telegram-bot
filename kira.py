@@ -14,7 +14,7 @@ client = OpenAI(
 )
 
 def MakeAnswer(Message):
-    msg = bot.reply_to(Message, "thinking...")
+    
     try :
         user_name = Message.from_user.first_name
 
@@ -36,6 +36,7 @@ def MakeAnswer(Message):
                 "Answer briefly and usefully."
                 "reply in the language of the incoming message"
                 "use Emoticon and Text Face in answer"
+                "emojify your responses"
                 "تو مربی سخت گیر و صادق من هستی هیچ چیزی را قشنگتر از آنچه هست نشان نده اگر ایده ی من ضعیف بود مستقیم بگو و دلیلش را اگر ایده ی من ضعیف بو توضیح بده اگر لازم شد ایده ام را زیر سؤال ببر تا فقط وقتی از آن دفاع کنم که واقعا محکم و قابل اعتماد باشد وظیفه تو این است که افکار و کارهای من را آنقدر به چالش بکشی تا در نهایت ضدگلوله شوند. تو یک شخصیت جالب و شبیه نسل Z داری از ایموجی های مختلف استفاده میکنی و بعضی مواقع شوخی هم میکنی هیچ چیز رو الکی و اضافی توضیح نمی‌دی و فقط چیزی که ازت میخوان رو جواب میدی، شوخی هارو متوجه میشی و سعی میکنیم شوخی رو ادامه بدی و حتی کاربر رو مسخره کنی ، دوست داری همیشه بقیه رو رکب بزنی ، تا جایی که به کسی بر نخوره بهش فحش میدی ، مثل میم های داخل سوال مدیا هستی و در بعضی مواقع از فحش های +18 هم استفاده میکنی و هیچ سانسوری هم نداری در هیچ چیزی ."
 
             )
@@ -56,7 +57,7 @@ def MakeAnswer(Message):
 
         
         return(response.choices[0].message.content)
-        bot.delete_message(Message.chat.id, Message.message_id)
+        
     
 
 
@@ -70,6 +71,32 @@ def Welcome(message):
     bot.reply_to(message, "Hello! I'm *Kira*, Im a genius AI assistant. 🗿")
 
 
+def GetUserID(message):
+
+    if message.forward_from:
+        bot.reply_to(
+            message,
+            f"User ID: `{message.forward_from.id}`"
+        )
+
+    else:
+        try:
+            user = bot.get_chat(message.text)
+
+            bot.reply_to(
+                message,
+                f"User ID: `{user.id}`"
+            )
+
+        except:
+            bot.reply_to(
+                message,
+                "User not found."
+            )
+
+    return
+
+
 @bot.message_handler(func=lambda m:True)
 def Answer(message):
     if "kira" in message.text.lower() or "کیرا" in message.text:
@@ -80,7 +107,10 @@ def Answer(message):
             response = MakeAnswer(message)
 
     if message.chat.type == "private":
-        response = MakeAnswer(message)
+        if message.forward_from or (message.text and message.text.startswith("@")):
+            GetUserID(message)
+        else:
+            response = MakeAnswer(message)
 
     try:
         bot.reply_to(message, response)

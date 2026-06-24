@@ -6,7 +6,7 @@ import os
 BotToken = os.getenv("BOT_TOKEN")
 groq_api_key = os.getenv("GROQ_API")
 
-bot = TeleBot(BotToken, parse_mode="Markdown")
+bot = TeleBot(BotToken)
 
 client = OpenAI(
     api_key= groq_api_key,
@@ -31,6 +31,7 @@ def MakeAnswer(Message):
             "role": "system", 
             "content": (
                 "You are a friendly assistant that helps users with their questions. "
+                "use HTML tags for formatting like <b>bold</b>, <i>italic</i>"
                 "Your name is Kira and your username is @kira_ibot."
                 "You made by ARTIN. Your API is Groq API."
                 "Answer briefly and usefully."
@@ -68,35 +69,14 @@ def MakeAnswer(Message):
 
 @bot.message_handler(['start'])
 def Welcome(message):
-    bot.reply_to(message, "Hello! I'm *Kira*, Im a genius AI assistant. 🗿")
-
-@bot.message_handler(
-    func=lambda m: m.forward_from or (m.text and m.text.startswith("@"))
-)
-def GetUserID(message):
-
-    if message.forward_from:
-        bot.reply_to(
-            message,
-            f"User ID: `{message.forward_from.id}`"
-        )
-
+    args = message.text.split(maxsplit=1)
+    if len(args) > 1:
+        question = args[1].replace("_", " ")
+        response = MakeAnswer(message)
+        bot.send_message(message.chat.id, response)
     else:
-        try:
-            user = bot.get_chat(message.text)
+        bot.reply_to(message, "Hello! I'm *Kira*, Im a genius AI assistant. 🗿")
 
-            bot.reply_to(
-                message,
-                f"User ID: `{user.id}`"
-            )
-
-        except:
-            bot.reply_to(
-                message,
-                "User not found."
-            )
-
-    return
 
 
 def GetUserID(message):

@@ -52,7 +52,7 @@ def MakeAnswer(Message):
     try:
         response = client.chat.completions.create(
             messages= messages_list,
-            model="qwen/qwen3.6-27b",
+            model="groq/compound-mini",
 
         )
 

@@ -52,7 +52,7 @@ def MakeAnswer(Message):
     try:
         response = client.chat.completions.create(
             messages= messages_list,
-            model="llama-3.3-70b-versatile",
+            model="meta-llama/llama-prompt-guard-2-22m",
 
         )
 
